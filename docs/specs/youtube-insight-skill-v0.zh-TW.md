@@ -23,6 +23,37 @@ V0 不處理：
 - PDF / 長文文件處理。
 - 完整 VideoRAG。
 
+## 設計端 / 用戶端路徑邊界
+
+這是硬規則：產品 repo 只放設計端與產品本體，不放使用者執行後的資料。
+
+產品 repo 可包含：
+
+- README
+- spec
+- skill
+- schema
+- template
+- script/source code
+
+產品 repo 不應包含：
+
+- 下載的影片工作副本
+- contact sheets
+- keyframes/crops
+- transcript runtime output
+- observation/verification runtime JSON
+- 使用者的最終知識庫筆記
+- 任何只屬於單次執行的 evidence package
+
+執行輸出必須寫到使用者指定的位置：
+
+- `{user_output_root}`：單次提煉的 evidence package，例如 contact sheets、keyframes、crops、transcript、JSON。
+- `{user_knowledge_base_root}`：最終 Markdown 筆記。
+- `{runtime_temp_root}`：可刪除的暫存工作副本。
+
+禁止在產品規格、Skill、範例中寫死開發者或設計者的家目錄，例如 `/Users/stereosurfer/...`。若使用者沒有提供輸出位置，Skill 必須先要求或使用明確的使用者設定，不得自行假設。
+
 ## 平台可攜性
 
 這套方法的核心分析流程其實不綁 YouTube。只要能取得以下任一種輸入，就可以套用：
@@ -90,6 +121,8 @@ platform adapter -> evidence inventory -> analysis pipeline -> knowledge artifac
 輸入：
 
 - `youtube_url` 或 `local_video_path`
+- `user_output_root`
+- `user_knowledge_base_root`
 - optional: `user_focus`
 - optional: `output_language`
 - optional: `verification_level`
@@ -107,7 +140,9 @@ platform adapter -> evidence inventory -> analysis pipeline -> knowledge artifac
 規則：
 
 - 不在最終輸出宣稱「已看完整影片」，除非 visual map 與 evidence coverage 都存在。
-- working copy 可存在暫存區，但 final artifacts 必須保存必要 evidence。
+- working copy 可存在 `{runtime_temp_root}`，但 final evidence artifacts 必須保存到 `{user_output_root}`。
+- 最終 Markdown 必須保存到 `{user_knowledge_base_root}` 或使用者明確指定的位置。
+- 不得把使用者輸出寫進產品 repo，除非使用者明確要求把 sample fixture 放進 repo。
 
 ### 2. Cheap Evidence Inventory
 
@@ -351,24 +386,28 @@ platform adapter -> evidence inventory -> analysis pipeline -> knowledge artifac
 ## V0 輸出結構
 
 ```text
-artifacts/youtube-insight-runs/{video_id}/
-  contact_sheets/
-  keyframes/
-  crops/
-  transcript_compact.txt
-  audience_feedback.json
-  evidence_inventory.json
-  visual_map.json
-  observations.json
-  verification.json
+{user_output_root}/youtube-insight-runs/{video_id}/
+  evidence/
+    contact_sheets/
+    keyframes/
+    crops/
+    transcript_compact.txt
+    audience_feedback.json
+  data/
+    evidence_inventory.json
+    visual_map.json
+    observations.json
+    verification.json
 
-docs/runs/
+{user_knowledge_base_root}/
   youtube-insight-{video_id}-{date}.zh-TW.md
 ```
 
 ## 驗收清單
 
 - [ ] 能處理 5 分鐘以內 slide-driven YouTube 影片。
+- [ ] 使用者輸出路徑由 `user_output_root` / `user_knowledge_base_root` 決定，沒有硬編碼開發者路徑。
+- [ ] 產品 repo 不保存 runtime artifacts，除非使用者明確要求 sample fixture。
 - [ ] 能建立 metadata + transcript/chapters + contact sheets 的 evidence inventory。
 - [ ] 若啟用留言掃描，能把觀眾回饋分成 question / critique / correction / source_link / practitioner_experience / insight / noise。
 - [ ] 能把有價值的觀眾質疑與線索送進查證層。
@@ -388,7 +427,7 @@ docs/runs/
 Codex 內建的 Skill Creator 比較像「給 Codex 自己用的技能包規格」，不是完整產品打包方案。V0 應拆成兩層：
 
 1. **Codex Skill layer**：`skills/youtube-insight-extractor/SKILL.md`，描述代理人該如何執行流程。
-2. **Portable product layer**：之後加入 `scripts/`、`schemas/`、`templates/`，讓 Claude Code、OpenCode、一般 CLI 或 web app 也能呼叫同一套流程。
+2. **Portable product layer**：之後加入 `scripts/`、`schemas/`、`templates/`，讓 Claude Code、OpenCode、一般 CLI 或 web app 也能呼叫同一套流程。這一層仍只保存產品本體，不保存使用者 runtime output。
 
 建議未來打包結構：
 

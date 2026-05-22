@@ -16,6 +16,20 @@ YouTube URL or local video
 -> Traditional Chinese insight note
 ```
 
+## Path Boundary
+
+The product repository is only for product assets:
+
+- specs,
+- skills,
+- schemas,
+- templates,
+- source code.
+
+Runtime output belongs to the user's configured folders, not this repository and not any developer/designer home path.
+
+Generated notes, contact sheets, keyframes, transcripts, verification logs, downloads, and working copies must be written under a user-provided output root or knowledge-base root. Examples in this repo use placeholders such as `{user_output_root}` and `{user_knowledge_base_root}` on purpose.
+
 ## Current Scope
 
 V0 supports the product design for:

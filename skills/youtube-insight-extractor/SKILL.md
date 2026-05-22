@@ -15,12 +15,16 @@ Build a cheap evidence inventory before model-led reasoning.
 
 Never claim the video was analyzed if the run has no visual evidence artifacts. Transcript-only output must be labeled transcript-only and is not acceptable for final insight unless the user explicitly asks for a transcript summary.
 
+Keep product/design paths separate from user runtime paths. The product repo contains the skill, specs, schemas, templates, and source code only. Runtime outputs must go under the user's configured output root or knowledge-base root. Do not hard-code developer/designer paths such as `/Users/stereosurfer/...` in generated output.
+
 ## Workflow
 
 1. **Intake**
    - Capture URL/path, title, duration, date, and run id.
+   - Resolve `user_output_root`, `user_knowledge_base_root`, and temporary working directory.
    - Create a working copy or use the provided local file.
-   - Store artifacts under `artifacts/youtube-insight-runs/{video_id}/`.
+   - Store evidence artifacts under `{user_output_root}/youtube-insight-runs/{video_id}/`.
+   - Store the final note under `{user_knowledge_base_root}` or another user-specified destination.
 
 2. **Cheap Evidence Inventory**
    - Capture transcript/chapters when available, but do not summarize from transcript alone.
@@ -71,23 +75,27 @@ Never claim the video was analyzed if the run has no visual evidence artifacts. 
 ## Default Artifact Layout
 
 ```text
-artifacts/youtube-insight-runs/{video_id}/
-  contact_sheets/
-  keyframes/
-  crops/
-  transcript_compact.txt
-  audience_feedback.json
-  evidence_inventory.json
-  visual_map.json
-  observations.json
-  verification.json
+{user_output_root}/youtube-insight-runs/{video_id}/
+  evidence/
+    contact_sheets/
+    keyframes/
+    crops/
+    transcript_compact.txt
+    audience_feedback.json
+  data/
+    evidence_inventory.json
+    visual_map.json
+    observations.json
+    verification.json
 
-docs/runs/
+{user_knowledge_base_root}/
   youtube-insight-{video_id}-{date}.zh-TW.md
 ```
 
 ## Acceptance Checks
 
+- Output paths are user-configured; no developer/designer home path is hard-coded.
+- Runtime artifacts are not written into the product repo unless explicitly requested as fixtures.
 - Contact sheets exist.
 - Transcript/chapters are present when available, or ASR absence is noted.
 - Audience feedback, if used, is separated from video evidence and classified by value.
