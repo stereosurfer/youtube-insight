@@ -135,12 +135,23 @@ source -> parse -> schema -> summary
 - 原文是摘要或宣傳文就順著寫。
 - 省略重要不確定性。
 
-### 4. 最終文章必須產生可用知識
+### 4. 最終文章必須先保留影片教學，再產生可用知識
 
-這個產品不是影片摘要器。最終筆記必須讓使用者學到至少一種可遷移、可操作、可判斷的東西。
+這個產品不是單純影片摘要器，但也不能把影片原本教的背景、概念、名詞、示範與作者脈絡丟掉。
+
+最終筆記必須先回答：
+
+- 這支影片在教哪個工具、功能或工作流？
+- 它把哪些角色、概念、名詞、設定或示範放在一起？
+- 哪些是影片可觀察到的教學內容？
+- 哪些是講者主張？
+- 哪些可以先學起來，但採用前要查證？
+
+然後才回答：這些內容能轉成什麼可遷移、可操作、可判斷的知識。
 
 可用知識包含：
 
+- background concept：背景概念與名詞脈絡。
 - procedure：可以照做的流程。
 - decision rule：何時該用 / 不該用的判斷規則。
 - anti-pattern：應避免的錯誤做法。
@@ -150,7 +161,7 @@ source -> parse -> schema -> summary
 - adoption condition：成立條件與不成立條件。
 - open question：值得保留到知識庫的待查問題。
 
-如果素材只能支撐「這支影片講了什麼」，不能支撐任何可用知識，輸出應標記 `NO_ACTIONABLE_INSIGHT`，而不是把摘要包裝成洞察。
+如果素材能支撐背景介紹或示範脈絡，即使尚未外部驗證，也要保留為 `source_taught` / `source_claim` / `needs_verification`，不能直接丟掉。只有在素材既沒有可重建的教學內容，也沒有可用知識時，才輸出 `NO_ACTIONABLE_INSIGHT`。
 
 ## V0 工作流
 
@@ -160,11 +171,12 @@ source -> parse -> schema -> summary
 3. Open Observation
 4. Observation Journal
 5. Reflection / Red Team
-6. Knowledge Distillation
-7. Evidence Structuring
-8. External Verification
-9. Final Synthesis
-10. Delivery Honesty And Usefulness Check
+6. Source Teaching Reconstruction
+7. Knowledge Distillation
+8. Evidence Structuring
+9. External Verification
+10. Final Synthesis
+11. Delivery Honesty And Learning-Value Check
 ```
 
 ### 1. Source Intake
@@ -277,13 +289,41 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 
 輸出：`reflection.md`
 
-### 6. Knowledge Distillation
+### 6. Source Teaching Reconstruction
 
-把 observation journal 轉成可用知識，不是轉成摘要。
+先重建影片到底教了什麼，不急著批判或抽象化。
+
+這一層要保留：
+
+- 工具 / 產品 / 功能歸屬：例如這是在講 Codex App 的 Subagents / Custom Agents，而不是泛泛而談所有 agent。
+- 背景概念：主代理、子代理、分工、上下文壓力、整合責任。
+- 可觀察示範：畫面中展示了哪些設定頁、路徑、配置、IDE/終端畫面。
+- 作者教學脈絡：他用什麼問題引出這個功能、想解決什麼工作流問題。
+- 講者主張：例如效率提升、上下文壓力降低。
+
+每項標記：
+
+- `observed_teaching`：影片畫面/語音確實在教。
+- `source_claim`：講者主張，但尚未外部驗證。
+- `demo_observed`：有展示流程或畫面，但細節可能需放大。
+- `unclear`：看見但不足以負責任解讀。
+- `needs_verification`：需查官方文件、版本或 benchmark。
+
+重要規則：
+
+- 未驗證不等於沒價值。
+- 不能因為需要查證，就把影片本身教會使用者的背景介紹刪掉。
+- contact sheet 可用來保留「有展示某概念/畫面」；但不能單獨支撐精確步驟或設定欄位。
+
+輸出：`source_teaching.json` 或 Markdown section。
+
+### 7. Knowledge Distillation
+
+把 source teaching 和 observation journal 轉成可用知識，不是轉成摘要，也不是把 source teaching 刪掉。
 
 每個 knowledge unit 至少包含：
 
-- 類型：procedure / decision_rule / anti_pattern / checklist / configuration_note / version_risk / adoption_condition / open_question。
+- 類型：background_concept / procedure / decision_rule / anti_pattern / checklist / configuration_note / version_risk / adoption_condition / open_question。
 - 內容：使用者日後可以怎麼用。
 - 成立條件。
 - 不成立或需要保留的條件。
@@ -293,9 +333,9 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 
 規則：
 
-- demo/configuration 類 knowledge unit 不能只靠 contact sheet。必須有可讀 keyframe、crop、密集回看、字幕/ASR 或外部文件支撐。
-- 若畫面太小、字幕缺失、設定欄位看不清，該 unit 只能是 `open_question` 或 `version_risk`，不能寫成可照做 procedure。
-- 若沒有任何可用 unit 存活，停止 final synthesis，輸出 `NO_ACTIONABLE_INSIGHT`。
+- demo/configuration 類 procedure 不能只靠 contact sheet。必須有可讀 keyframe、crop、密集回看、字幕/ASR 或外部文件支撐。
+- 若畫面太小、字幕缺失、設定欄位看不清，仍可保留為 `background_concept`、`source_taught`、`open_question` 或 `version_risk`，不能寫成可照做 procedure。
+- 若沒有任何 source teaching 或可用 unit 存活，才停止 final synthesis，輸出 `NO_ACTIONABLE_INSIGHT`。
 
 最低格式：
 
@@ -312,7 +352,7 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 }
 ```
 
-### 7. Evidence Structuring
+### 8. Evidence Structuring
 
 只在 observation journal 之後做結構化。
 
@@ -320,6 +360,7 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 
 - `evidence_index.json`
 - `claim_map.json`
+- `source_teaching.json`
 - `knowledge_units.json`
 - `verification_questions.json`
 - `audience_feedback.json`
@@ -340,9 +381,9 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 }
 ```
 
-### 8. External Verification
+### 9. External Verification
 
-查證只針對高風險或有疑點的主張，不把整個系統拖回舊式 RAG。
+查證只針對高風險或有疑點的主張，不把整個系統拖回舊式 RAG，也不取代 source teaching。
 
 必查：
 
@@ -363,14 +404,15 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 
 輸出：`verification.md` 或 `verification.json`
 
-### 9. Final Synthesis
+### 10. Final Synthesis
 
 輸出：繁體中文 Markdown 筆記。
 
 必須包含：
 
 - 一句話底層邏輯。
-- 可用知識，不是影片摘要。
+- 影片教了什麼：背景、概念、功能歸屬、示範脈絡。
+- 可用知識，不是只有影片摘要。
 - 可以直接採用的流程 / 規則 / 檢查表。
 - 不應採用或需保留的條件。
 - 已確認事實。
@@ -381,13 +423,14 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 
 寫作規則：
 
-- 不得標題或結構成「影片摘要」「閱讀版摘要」。
+- 不得只寫成「影片摘要」「閱讀版摘要」。
+- 必須保留影片核心教學，例如工具/功能歸屬、概念背景、示範脈絡。
 - 明確區分：我看到的、講者主張、觀眾線索、外部查證、我的推論。
 - 不用行銷摘要語氣。
 - 不為了完整感補不存在的證據。
-- 若只能寫出分段摘要，必須回到 Knowledge Distillation；仍無可用知識就輸出 `NO_ACTIONABLE_INSIGHT`。
+- 若只能寫出分段時間軸，必須回到 Source Teaching Reconstruction / Knowledge Distillation。
 
-### 10. Delivery Honesty And Usefulness Check
+### 11. Delivery Honesty And Learning-Value Check
 
 輸出：`delivery_audit.md`
 
@@ -399,8 +442,9 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 - 圖片、圖表、demo UI 的描述是否有對應畫面證據？
 - audience feedback 是否被標成線索，而不是事實？
 - 是否保留未看、看不清、沒查到、需重看的地方？
-- 最終筆記是否真的包含可用知識，而不是摘要？
-- 每個可用知識單元是否有可讀 evidence 或驗證來源？
+- 最終筆記是否保留影片核心教學，而不是只剩批判或抽象規則？
+- 最終筆記是否真的包含可用知識，而不是只有時間軸摘要？
+- 每個可採用 procedure 是否有可讀 evidence 或驗證來源？
 
 若不通過，回到 Open Observation 或 Reflection。
 
@@ -410,10 +454,11 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 | gate | verdict | reason | required action |
 | --- | --- | --- | --- |
 | trace | fail | final procedure has no readable frame/crop | dense review 06:30-09:00 |
-| knowledge_usefulness | fail | output is only a video summary | distill decision rules or return NO_ACTIONABLE_INSIGHT |
+| source_teaching_preserved | fail | final note omits that the video teaches Codex App Subagents / Custom Agents | reconstruct source teaching |
+| learning_value | fail | output is only a timeline summary | distill concepts, rules, risks, or questions |
 ```
 
-禁止用單一 `PASS with caveats` 掩蓋失敗。每個 gate 必須獨立判定。
+禁止用單一 `PASS with caveats` 掩蓋失敗。每個 gate 必須獨立判定。建議 gates：`source_teaching_preserved`、`trace`、`readability`、`verification`、`learning_value`、`path_boundary`。
 
 ## 預設輸出結構
 
@@ -432,6 +477,7 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
   data/
     evidence_index.json
     claim_map.json
+    source_teaching.json
     knowledge_units.json
     verification_questions.json
     verification.json
@@ -454,14 +500,15 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 - [ ] 產生 reflection，並檢查 framing 污染、漏看畫面、推測冒充事實。
 - [ ] 產生 `delivery_audit.md`，且 final key claims 都能回到 journal 或 verification。
 - [ ] JSON 結構化產物由 journal 派生，不先用固定 schema 綁住觀察。
-- [ ] 產生 `knowledge_units.json`，或明確輸出 `NO_ACTIONABLE_INSIGHT`。
-- [ ] 最終 Markdown 不是影片摘要，且至少包含可採用流程、判斷規則、反模式、檢查表、版本風險或待查問題之一。
-- [ ] demo/configuration 類知識不可只靠 contact sheet；必須有可讀 keyframe/crop/dense review/字幕/ASR/外部文件。
+- [ ] 產生 `source_teaching.json`，保留影片教學背景、概念、功能歸屬、示範脈絡與講者主張。
+- [ ] 產生 `knowledge_units.json`，或在沒有 source teaching / usable unit 時明確輸出 `NO_ACTIONABLE_INSIGHT`。
+- [ ] 最終 Markdown 不只是時間軸摘要，也不能丟掉影片基本背景介紹；至少包含 source teaching 與可採用流程、判斷規則、反模式、檢查表、版本風險或待查問題之一。
+- [ ] demo/configuration 類精確步驟不可只靠 contact sheet；但 contact sheet 足以保留「影片展示了此功能/概念」這類 source teaching。
 - [ ] 原生影片模型的視覺觀察至少有時間碼；若沒有可保存 frame/crop，必須標記 native-video-only 與可回放限制。
 - [ ] 高風險主張進入外部查證或明確標示未查證。
 - [ ] 最終 Markdown 明確區分觀察、講者主張、觀眾線索、外部查證、推論。
 - [ ] final note 忠於 trace；沒有 trace 支撐的內容不可寫成事實。
-- [ ] delivery audit 使用分 gate 判定，不使用單一 `PASS with caveats`。
+- [ ] delivery audit 使用分 gate 判定，不使用單一 `PASS with caveats`，且包含 `source_teaching_preserved` 與 `learning_value`。
 
 ## 可攜性
 
