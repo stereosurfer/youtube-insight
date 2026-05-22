@@ -4,6 +4,8 @@
 
 YouTube Insight turns knowledge videos into accountable investigation notes for a personal knowledge base.
 
+It is not a video summarizer. A run only succeeds when it produces reusable knowledge: procedures, decision rules, cautions, adoption conditions, version risks, or concrete open questions.
+
 The project is currently a V0 specification plus a Codex Skill draft. It focuses on one narrow workflow:
 
 ```text
@@ -12,6 +14,7 @@ YouTube URL or local video
 -> open observation
 -> observation journal
 -> reflection and recheck
+-> knowledge distillation
 -> evidence structuring
 -> final accountable note
 ```
