@@ -1,0 +1,13 @@
+.DS_Store
+*.mp4
+*.mkv
+*.webm
+*.mov
+*.m4a
+*.wav
+*.tmp
+tmp/
+work/
+downloads/
+.venv/
+__pycache__/
