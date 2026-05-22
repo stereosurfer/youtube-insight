@@ -2,18 +2,18 @@
 
 **Observe, Structure, Investigate, Verify, Report.**
 
-YouTube Insight turns knowledge videos into evidence-backed notes for a personal knowledge base.
+YouTube Insight turns knowledge videos into accountable investigation notes for a personal knowledge base.
 
 The project is currently a V0 specification plus a Codex Skill draft. It focuses on one narrow workflow:
 
 ```text
 YouTube URL or local video
--> cheap evidence inventory
--> visual/keyframe evidence package
--> transcript and audience-feedback alignment
--> claim and gap extraction
--> external verification
--> Traditional Chinese insight note
+-> investigation plan
+-> open observation
+-> observation journal
+-> reflection and recheck
+-> evidence structuring
+-> final accountable note
 ```
 
 ## Path Boundary
@@ -50,14 +50,25 @@ V0 does not aim to support:
 
 ## Key Principle
 
-Build a cheap evidence inventory before model-led reasoning.
+Freedom to observe. Mandatory trace. Accountable delivery.
 
-The transcript is useful, but it is not enough. Visual evidence, slide text, charts, demo screens, audience feedback, and external sources should stay in separate layers until synthesis.
+The model is allowed to use modern capabilities: video understanding, long context, vision, audio, screenshots, browser/computer-use, interaction, zooming, replaying, and external search.
+
+The product does not force old ETL steps such as DOM extraction, OCR-first processing, chunk-first RAG, or fixed claim tables as the main reasoning path.
+
+What the product enforces is honesty:
+
+- say what was observed,
+- say how it was known,
+- say what was not observed,
+- mark inference as inference,
+- recheck weak or surprising claims,
+- keep the final note faithful to the trace.
 
 ## Repository Map
 
 - [`skills/youtube-insight-extractor/SKILL.md`](skills/youtube-insight-extractor/SKILL.md): Codex Skill draft.
-- [`docs/specs/youtube-insight-skill-v0.zh-TW.md`](docs/specs/youtube-insight-skill-v0.zh-TW.md): V0 product and workflow spec.
+- [`docs/specs/investigation-first-knowledge-extraction-v0.zh-TW.md`](docs/specs/investigation-first-knowledge-extraction-v0.zh-TW.md): V0 product and workflow spec.
 
 ## Status
 
