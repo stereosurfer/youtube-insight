@@ -408,6 +408,25 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 
 輸出：繁體中文 Markdown 筆記。
 
+主文順序必須以學習價值優先，不以 metadata、evidence count、可信度標籤或時間軸開場。
+
+建議結構：
+
+1. **我從這支影片學到什麼**
+   - 這支影片在教哪個工具/功能/工作流。
+   - 影片建立的基本背景與概念。
+   - 對使用者最有用的一句判斷。
+2. **影片教學重建**
+   - 背景、概念、功能歸屬、示範脈絡。
+   - 哪些是畫面可觀察內容，哪些是講者主張。
+3. **可採用知識**
+   - 可用流程、判斷規則、反模式、檢查表、版本風險或待查問題。
+4. **採用條件與保留**
+   - 哪些可先學起來。
+   - 哪些採用前要查官方文件、版本、benchmark。
+5. **證據與限制**
+   - evidence links、字幕狀態、metadata、時間軸摘要。
+
 必須包含：
 
 - 一句話底層邏輯。
@@ -425,6 +444,7 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 
 - 不得只寫成「影片摘要」「閱讀版摘要」。
 - 必須保留影片核心教學，例如工具/功能歸屬、概念背景、示範脈絡。
+- metadata、evidence count、字幕狀態、可信度結論、時間軸摘要只能放在後段或附錄，不可作為主文開頭。
 - 明確區分：我看到的、講者主張、觀眾線索、外部查證、我的推論。
 - 不用行銷摘要語氣。
 - 不為了完整感補不存在的證據。
@@ -503,6 +523,7 @@ replay handle：keyframes/03-35.jpg + transcript 03:35-03:45
 - [ ] 產生 `source_teaching.json`，保留影片教學背景、概念、功能歸屬、示範脈絡與講者主張。
 - [ ] 產生 `knowledge_units.json`，或在沒有 source teaching / usable unit 時明確輸出 `NO_ACTIONABLE_INSIGHT`。
 - [ ] 最終 Markdown 不只是時間軸摘要，也不能丟掉影片基本背景介紹；至少包含 source teaching 與可採用流程、判斷規則、反模式、檢查表、版本風險或待查問題之一。
+- [ ] 最終 Markdown 以學習內容開場，不以影片 ID、長度、抽幀數、字幕狀態、可信度或時間軸摘要開場。
 - [ ] demo/configuration 類精確步驟不可只靠 contact sheet；但 contact sheet 足以保留「影片展示了此功能/概念」這類 source teaching。
 - [ ] 原生影片模型的視覺觀察至少有時間碼；若沒有可保存 frame/crop，必須標記 native-video-only 與可回放限制。
 - [ ] 高風險主張進入外部查證或明確標示未查證。

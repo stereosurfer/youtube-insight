@@ -93,6 +93,7 @@ If output roots are missing, ask for them or read explicit user configuration. D
    - Write the final Traditional Chinese note under `{user_knowledge_base_root}`.
    - Include: what the video teaches, why it matters, usable knowledge units, adoption conditions, cautions, corrected framing, unresolved checks, and evidence links.
    - Do not structure the artifact as only a timeline summary; a short source-teaching section is required.
+   - Put learning content first. Metadata, evidence counts, subtitle status, and timeline are supporting material and must not lead the note.
    - Separate observation, source claim, audience lead, external verification, and inference.
 
 11. **Delivery Honesty And Learning-Value Check**
@@ -150,6 +151,7 @@ If output roots are missing, ask for them or read explicit user configuration. D
 - High-risk claims are verified or explicitly marked unverified.
 - Final note does not exceed the trace.
 - Final note includes what the video taught and what can be reused, questioned, or verified.
+- Final note starts with learning value, not metadata, evidence counts, caveats, or timeline.
 
 ## Style
 
